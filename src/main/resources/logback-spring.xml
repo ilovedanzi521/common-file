@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    
+	<appender name="LOGSTASH-PROD"
+        class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>127.0.0.1:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <shortenedLoggerNameLength>36</shortenedLoggerNameLength>
+            <customFields>{"hostname":"${hostname}","appname":"${springAppName}"}</customFields>
+            <fieldNames>
+                <version>[ignore]</version>
+            </fieldNames>   
+        </encoder>      
+    </appender>
+
+    <appender name="LOGSTASH-TEST"
+        class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>127.0.0.1:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <shortenedLoggerNameLength>36</shortenedLoggerNameLength>
+            <customFields>{"hostname":"${hostname}","appname":"${springAppName}"}</customFields>
+        </encoder>
+    </appender>
+    
+    <!-- 文件输出 -->
+    <appender name="LOGFILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">   
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <fileNamePattern>log/${springAppName}/%d{yyyy-MM-dd}/server.%i.log</fileNamePattern>
+            <!--日志文件最大的大小-->
+            <maxFileSize>5MB</maxFileSize>
+            <!--日志文件保留天数-->
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 异步写文件 -->
+    <appender name="asyncFileAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>500</queueSize>
+        <appender-ref ref="LOGFILE"/>
+    </appender>
+    
+    <!-- 控制台输出 -->
+    <appender name="LOGCONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+	<logger name="org.springframework.web" level="INFO" />
+	
+	<!-- 开发环境 -->
+	<springProfile name="dev">
+		<logger name="com.yhfin" level="DEBUG">
+			<appender-ref ref="LOGCONSOLE" />
+			<appender-ref ref="asyncFileAppender" />
+		</logger>
+		<root level="DEBUG">
+            <appender-ref ref="LOGCONSOLE" />
+            <appender-ref ref="asyncFileAppender" />
+        </root>
+	</springProfile>
+	
+	<!-- 测试环境 -->
+	<springProfile name="test">
+		<logger name="com.yhfin" level="INFO">
+			<appender-ref ref="LOGCONSOLE" />
+			<appender-ref ref="LOGSTASH-TEST"/>
+			<appender-ref ref="asyncFileAppender" />
+		</logger>
+		
+		<root level="INFO">
+            <appender-ref ref="LOGCONSOLE" />
+            <appender-ref ref="LOGSTASH-TEST" />
+            <appender-ref ref="asyncFileAppender" />
+        </root>    
+	</springProfile>
+	
+	<!-- 生产环境 -->
+	<springProfile name="prod">
+		<logger name="com.yhfin" level="INFO">
+			<appender-ref ref="LOGSTASH-PROD" />
+			<appender-ref ref="asyncFileAppender" />
+		</logger>
+		
+		<root level="INFO">
+            <appender-ref ref="LOGSTASH-PROD" />
+            <appender-ref ref="asyncFileAppender" />
+        </root>
+	</springProfile>
+</configuration>

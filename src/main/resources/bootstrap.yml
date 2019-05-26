@@ -1,0 +1,21 @@
+server:
+    port: 30302
+spring:
+    application:
+        name: ycmp-auth-center #对应前配置文件中的{application}部分 
+    cloud:
+      config: #/{label}/{application}-{profile}.yml
+         label: dev #对应前配置文件的git分支
+         profile: ${config.profile:test} #对应前配置文件中的{profile}部分
+         discovery:
+           enabled: true #是从配置中心读取文件
+           service-id: ycmp-config-center #配置中心的servieId，即服务名
+eureka:
+  client:
+    service-url:
+         defaultZone: http://ycmpadmin:ycmpadmin@127.0.0.1:10010/eureka #配置服务注册中心 多个用逗号分隔
+
+##如果无需使用数据库，请做如下设置，否则将导致监控失败下线. 用数据库则设置为true
+mybatis:
+   datasource:
+     enable: true

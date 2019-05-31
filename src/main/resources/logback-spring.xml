@@ -2,7 +2,7 @@
 <configuration>
 
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-    
+
 	<appender name="LOGSTASH-PROD"
         class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>127.0.0.1:5000</destination>
@@ -11,8 +11,8 @@
             <customFields>{"hostname":"${hostname}","appname":"${springAppName}"}</customFields>
             <fieldNames>
                 <version>[ignore]</version>
-            </fieldNames>   
-        </encoder>      
+            </fieldNames>
+        </encoder>
     </appender>
 
     <appender name="LOGSTASH-TEST"
@@ -23,9 +23,9 @@
             <customFields>{"hostname":"${hostname}","appname":"${springAppName}"}</customFields>
         </encoder>
     </appender>
-    
+
     <!-- 文件输出 -->
-    <appender name="LOGFILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">   
+    <appender name="LOGFILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
             <fileNamePattern>log/${springAppName}/%d{yyyy-MM-dd}/server.%i.log</fileNamePattern>
@@ -46,7 +46,7 @@
         <queueSize>500</queueSize>
         <appender-ref ref="LOGFILE"/>
     </appender>
-    
+
     <!-- 控制台输出 -->
     <appender name="LOGCONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -54,12 +54,12 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
     </appender>
-    
+
 	<logger name="org.springframework.web" level="INFO" />
-	
+
 	<!-- 开发环境 -->
 	<springProfile name="dev">
-		<logger name="com.yhfin" level="DEBUG">
+		<logger name="com.win" level="DEBUG">
 			<appender-ref ref="LOGCONSOLE" />
 			<appender-ref ref="asyncFileAppender" />
 		</logger>
@@ -68,29 +68,29 @@
             <appender-ref ref="asyncFileAppender" />
         </root>
 	</springProfile>
-	
+
 	<!-- 测试环境 -->
 	<springProfile name="test">
-		<logger name="com.yhfin" level="INFO">
+		<logger name="com.win" level="INFO">
 			<appender-ref ref="LOGCONSOLE" />
 			<appender-ref ref="LOGSTASH-TEST"/>
 			<appender-ref ref="asyncFileAppender" />
 		</logger>
-		
+
 		<root level="INFO">
             <appender-ref ref="LOGCONSOLE" />
             <appender-ref ref="LOGSTASH-TEST" />
             <appender-ref ref="asyncFileAppender" />
-        </root>    
+        </root>
 	</springProfile>
-	
+
 	<!-- 生产环境 -->
 	<springProfile name="prod">
-		<logger name="com.yhfin" level="INFO">
+		<logger name="com.win" level="INFO">
 			<appender-ref ref="LOGSTASH-PROD" />
 			<appender-ref ref="asyncFileAppender" />
 		</logger>
-		
+
 		<root level="INFO">
             <appender-ref ref="LOGSTASH-PROD" />
             <appender-ref ref="asyncFileAppender" />

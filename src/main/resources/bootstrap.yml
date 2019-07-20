@@ -1,0 +1,25 @@
+server:
+  port: 11020 #本地开发环境时用，生产部署时，应该设置为0，系统随机创建端口
+spring:
+  application:
+    name: dfbp-common-file #服务名
+  profiles:
+    active: dev
+    data:
+      mongodb:
+        uri:mongodb://127.0.0.1:27017/demo
+logging:
+  level:
+    com.win.dfas: DEBUG
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 10 # 续约更新时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 30 #服务失效时间。默认是90秒，也就是如果Eureka Server在90秒内没有接收到来自ServiceProvider的Renew操作，就会把Service Provider剔除
+    instance-id: ${spring.cloud.client.hostname}:${spring.cloud.client.ipAddress}:${random.int} #设置实例名
+    prefer-ip-address: true #使用IP地址来做注册中心地址
+  client:
+    InitialInstanceInfoReplicationIntervalSeconds: 1 #最初复制实例信息到eureka服务器所需的时间（s），默认为40秒
+    InstanceInfoReplicationIntervalSeconds: 10 #复制实例变化信息到eureka服务器所需要的时间间隔（s），默认为30秒
+    RegistryFetchIntervalSeconds: 10 #从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒
+    service-url:
+      defaultZone: http://192.168.0.60:10010/eureka/ #配置服务注册中心 多个用逗号分隔

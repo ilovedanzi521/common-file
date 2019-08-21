@@ -5,9 +5,13 @@ spring:
     name: dfbp-common-file #服务名
   profiles:
     active: dev
-    data:
-      mongodb:
-        uri:mongodb://127.0.0.1:27017/demo
+  data:
+    mongodb:
+      uri: mongodb://192.168.203.131:27017/test
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 1000MB
 logging:
   level:
     com.win.dfas: DEBUG
@@ -23,3 +27,6 @@ eureka:
     RegistryFetchIntervalSeconds: 10 #从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒
     service-url:
       defaultZone: http://192.168.0.60:10010/eureka/ #配置服务注册中心 多个用逗号分隔
+mybatis:
+  datasource:
+    enable: false

@@ -1,0 +1,13 @@
+{
+    "extends": "tslint:recommended",
+    "globals": {
+        "require": true
+    },
+    "defaultSeverity": "none",
+    "rules":{
+        "trailing-comma": [false, {"multiline": "always", "singleline": "never"}],
+        "object-literal-sort-keys": false,
+        "ordered-imports": false,
+        "max-classes-per-file": [true, 5]
+    }
+}

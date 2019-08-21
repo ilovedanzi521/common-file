@@ -1,0 +1,63 @@
+/* Element Chalk Variables */
+
+// Special comment for theme configurator
+// type|skipAutoTranslation|Category|Order
+
+/* Color
+-------------------------- */
+/// color|1|Brand Color|0
+$--color-primary: #ff900d !default;
+/// color|1|Background Color|4
+$--color-white: #1f2640 !default;
+/// color|1|Background Color|4
+$--color-black: #0b1431 !default;
+
+/// color|1|Functional Color|1
+$--color-success: #33cc33 !default;
+/// color|1|Functional Color|1
+$--color-warning: #f7ba2a !default;
+/// color|1|Functional Color|1
+$--color-danger: #ff4d4d !default;
+/// color|1|Functional Color|1
+$--color-info: #2b3551 !default;
+
+/// color|1|Font Color|2
+$--color-text-primary: #ffffff !default;
+/// color|1|Font Color|2
+$--color-text-regular: #ffffff !default;
+/// color|1|Font Color|2
+$--color-text-secondary: #d6d7d7 !default;
+/// color|1|Font Color|2
+$--color-text-placeholder: #909399 !default;
+/// color|1|Border Color|3
+$--border-color-base: #6b7286 !default;
+/// color|1|Border Color|3
+$--border-color-light: #7b8296 !default;
+/// color|1|Border Color|3
+$--border-color-lighter: #8b92a6 !default;
+/// color|1|Border Color|3
+$--border-color-extra-light: #9ba2b6 !default;
+
+// Background
+/// color|1|Background Color|4
+$--background-color-base: #0b1431 !default;
+
+// Button
+$--button-hover-tint-percent: 20% !default;
+
+//diy
+$--color-success-blue: #546fd8;
+
+$--color-default-color: #999999;
+
+$--table-header-background-color: #444e69 !default;
+
+$--table-current-row-background-color: #6b799e !default;
+
+$--table-current-row-outline-color: #1375bd !default;
+
+$--table-row-striped-background-color: #1b2441;
+
+$--font-color-disabled-base: #bbb !default;
+
+$--color-secondary: #2680eb !default;

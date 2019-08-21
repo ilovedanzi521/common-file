@@ -1,175 +1,145 @@
 package com.win.dfas.controller;
 
-import com.win.dfas.service.FileService;
-import com.win.dfas.vo.File;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import com.github.pagehelper.PageInfo;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.win.dfas.common.util.WinExceptionUtil;
+import com.win.dfas.common.vo.WinResponseData;
+import com.win.dfas.entity.FileDocument;
+import com.win.dfas.entity.ResponseModel;
+import com.win.dfas.exception.FileExceptionEnum;
+import com.win.dfas.service.IFileService;
+import com.win.dfas.util.FileContentTypeUtils;
+import com.win.dfas.vo.request.FileReqVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * 包名称：com.win.dfas.controller
- * 类名称：FileController
- * 类描述：${TODO}
- * 创建人：@author wanglei
- * 创建时间：2019/5/31/16:58
- */
-@CrossOrigin(origins = "*", maxAge = 3600)  // 允许所有域名访问
-@Controller
+@CrossOrigin(origins = "*", maxAge = 3600)
+@RestController
+@RequestMapping("files")
+@Slf4j
 public class FileController {
 
     @Autowired
-    private FileService fileService;
+    private IFileService fileService;
 
-    @Value("${server.address}")
-    private String serverAddress;
-
-    @Value("${server.port}")
-    private String serverPort;
-
-    @RequestMapping(value = "/")
-    public String index(Model model) {
-        // 展示最新二十条数据
-        model.addAttribute("files", fileService.listFilesByPage(0,20));
-        return "index";
-    }
+    @Autowired
+    private GridFSBucket gridFSBucket;
 
     /**
-     * 分页查询文件
-     * @param pageIndex
-     * @param pageSize
+     * 列表数据
      * @return
      */
-    @GetMapping("files/{pageIndex}/{pageSize}")
-    @ResponseBody
-    public List<File> listFilesByPage(@PathVariable int pageIndex, @PathVariable int pageSize){
-        return fileService.listFilesByPage(pageIndex, pageSize);
-    }
+    @PostMapping("/list")
+    public WinResponseData list(@RequestBody FileReqVO fileReqVO){
+        PageInfo<FileDocument> list = fileService.listFilesByPage(fileReqVO);
+        return WinResponseData.handleSuccess("成功",list);
 
-    /**
-     * 获取文件片信息
-     * @param id
-     * @return
-     */
-    @GetMapping("files/{id}")
-    @ResponseBody
-    public ResponseEntity<Object> serveFile(@PathVariable String id) {
-
-        File file = fileService.getFileById(id);
-
-        if (file != null) {
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"" + file.getName() + "\"")
-                    .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream" )
-                    .header(HttpHeaders.CONTENT_LENGTH, file.getSize()+"")
-                    .header("Connection",  "close")
-                    .body( file.getContent());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
-        }
 
     }
 
     /**
      * 在线显示文件
-     * @param id
+     * @param id 文件id
      * @return
      */
     @GetMapping("/view/{id}")
-    @ResponseBody
-    public ResponseEntity<Object> serveFileOnline(@PathVariable String id) {
-
-        File file = fileService.getFileById(id);
-
-        if (file != null) {
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "fileName=\"" + file.getName() + "\"")
-                    .header(HttpHeaders.CONTENT_TYPE, file.getContentType() )
-                    .header(HttpHeaders.CONTENT_LENGTH, file.getSize()+"")
-                    .header("Connection",  "close")
-                    .body( file.getContent());
+    public WinResponseData  serveFileOnline(@PathVariable String id) {
+        Optional<FileDocument> file = fileService.getById(id);
+        ResponseEntity<Object> rtn;
+        if (file.isPresent()) {
+            rtn= ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "fileName=" + file.get().getName())
+                    .header(HttpHeaders.CONTENT_TYPE, file.get().getContentType())
+                    .header(HttpHeaders.CONTENT_LENGTH, file.get().getSize() + "").header("Connection", "close")
+                    .header(HttpHeaders.CONTENT_LENGTH , file.get().getSize() + "")
+                    .body(file.get().getContent());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount");
+            rtn= ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not found");
         }
-
+        return WinResponseData.handleSuccess(rtn);
     }
 
     /**
-     * 上传
-     * @param file
-     * @param redirectAttributes
+     * 下载附件
+     * @param id
      * @return
+     * @throws UnsupportedEncodingException
      */
-    @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
-
-        try {
-            File f = new File(file.getOriginalFilename(),  file.getContentType(), file.getSize(), file.getBytes());
-            f.setMd5( DigestUtils.md5DigestAsHex(file.getInputStream()) );
-            fileService.saveFile(f);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            redirectAttributes.addFlashAttribute("message",
-                    "Your " + file.getOriginalFilename() + " is wrong!");
-            return "redirect:/";
+    @GetMapping("/download/{finame}/{id}")
+    public WinResponseData downloadFileById(@PathVariable String finame, @PathVariable String id, HttpServletResponse response) throws IOException {
+        Optional<FileDocument> file = fileService.getById(id);
+        if(file.isPresent()){
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=" + URLEncoder.encode(file.get().getName() , "utf-8"));
+            response.setHeader(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+            response.setHeader(HttpHeaders.CONTENT_LENGTH, file.get().getSize() + "");
+            response.setHeader("Connection", "close");
+            byte[] content = file.get().getContent();
+            int sumLen = content.length;
+            int i = 0;
+            do{
+                int max = sumLen-i>1024?1024:sumLen-i;
+                response.getOutputStream().write(content, i, max);
+                i=i+1024;
+            }while(sumLen>i);
+        }else {
+            return WinResponseData.handleError("File was not found");
         }
-
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
+        return WinResponseData.handleSuccess("成功");
     }
 
     /**
-     * 上传接口
-     * @param file
+     * 表单上传文件
+     * 当数据库中存在该md5值时，可以实现秒传功能
+     * @param file 文件
      * @return
      */
     @PostMapping("/upload")
-    @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        File returnFile = null;
+    public WinResponseData formUpload(@RequestParam("file") MultipartFile file){
         try {
-            File f = new File(file.getOriginalFilename(),  file.getContentType(), file.getSize(),file.getBytes());
-            f.setMd5(  DigestUtils.md5DigestAsHex(file.getInputStream()) );
-            returnFile = fileService.saveFile(f);
-            String path = "//"+ serverAddress + ":" + serverPort + "/view/"+returnFile.getId();
-            return ResponseEntity.status(HttpStatus.OK).body(path);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            if(file != null && !file.isEmpty()){
+                String fileMd5 = SecureUtil.md5(file.getInputStream());
+                FileDocument fileDocument = fileService.saveFile(fileMd5 , file);
+                log.info("FileDocument:{}",fileDocument);
+            }else {
+                return WinResponseData.handleError("请传入文件");
+            }
+        }catch (Throwable ex){
+            log.error("上传异常{}",ex.getCause());
+            throw WinExceptionUtil.winException(FileExceptionEnum.UPLOAD_ERROR);
         }
-
+        return WinResponseData.handleSuccess("上传成功");
     }
 
+
     /**
-     * 删除文件
+     * 删除附件
      * @param id
      * @return
      */
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<String> deleteFile(@PathVariable String id) {
-
-        try {
-            fileService.removeFile(id);
-            return ResponseEntity.status(HttpStatus.OK).body("DELETE Success!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    public WinResponseData deleteFile(@PathVariable String id){
+        if(!StrUtil.isEmpty(id)){
+            fileService.removeFile(id , true);
+        }else {
+            return WinResponseData.handleError("请传入文件id");
         }
+        return WinResponseData.handleSuccess("删除成功");
     }
 }

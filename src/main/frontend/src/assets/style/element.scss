@@ -1,0 +1,152 @@
+@charset 'UTF-8';
+
+// main  背景色-主题色
+$color-main: #1f2640;
+//       容器-主题色
+$color-assist: #0a0f0e;
+//       元素主色
+$color-orange: #ff900d;
+$color-white: #fff;
+$color-red: #ff4d4d;
+$color-green: #33cc33;
+$color-yellow: #ffb822;
+$color-main2: #0b1431;
+$color-bule: #2f4cbd;
+
+// status color
+// 除了主色外的场景色，需要在不同的场景中使用。
+$color-success: #33cc33; // success 成功
+$color-warning: #ff4d4d; // waring  警告
+$color-danger: #ff900d; // danger   危险
+
+// text color
+$color-font1: #303133;
+$color-font2: #606266;
+$color-font3: #909399;
+$color-font4: #929292;
+$color-font5: #c0c4cc;
+$color-font6: #8d959a;
+$color-border-hover: #b6b6b6; // hover边框
+$color-background-hover: #0b1431;
+
+// line color
+$color-line-button: #dcdfe6; // 标题分割线、列表分割线、按钮边框
+$color-line-card: #e4e7ed; // 卡片分割线.或者浅色背景
+$color-line-nav: rgba($color-main, 0.3); // 导航下边线和tagview边框
+
+// background color
+$color-body-bg: #ebeef5; // body背景色
+$color-footer-bg: #444e69;
+$color-background: $color-body-bg;
+$color-menu-hover: rgba($color-main, 0.1); // 导航Hover色
+$table-color: #444e69;
+$table-color2: #1b2441;
+
+//字体大小
+$font-size1: 24px; //一级列表
+$font-size2: 20px; //二级标题
+$font-size3: 16px; //块级标题/Table
+$font-size4: 14px; //正文内容
+$font-size5: 12px; //提示
+
+//other
+$radius4px: 4px;
+
+@mixin button($width: 100px, $height: 40px, $bg: #f5f7fa, $color: #999999) {
+    display: inline-block;
+    border: none;
+    width: $width;
+    height: $height;
+    background: $bg;
+    border-radius: 4px;
+    color: $color;
+    text-align: center;
+    cursor: pointer;
+}
+
+@mixin sinput($width: 249px, $height: 40px, $bg: #3f3f3f, $color: #999999) {
+    width: $width;
+    height: $height;
+    line-height: $height;
+    background: $bg;
+    color: $color;
+    display: inline-block;
+    padding: 14px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+@mixin showType($bg: #ff4d4d) {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        margin-left: -4px;
+        margin-top: -4px;
+        border-radius: 50%;
+        background: $bg;
+    }
+}
+
+@mixin showType($bg: #ff4d4d) {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+
+    &.active::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        margin-left: -4px;
+        margin-top: -4px;
+        border-radius: 50%;
+        background: $bg;
+    }
+}
+
+@mixin iuputUi() {
+    border: 0;
+    background: none;
+    width: 240px;
+    height: 40px;
+    line-height: 40px;
+    padding: 15px;
+    border: 1px solid #dcdfe6;
+    border-radius: $radius4px;
+    box-sizing: border-box;
+    font-size: $font-size4;
+    outline: none;
+    color: #fff;
+    cursor: pointer;
+
+    &::-webkit-input-placeholder {
+        color: $color-font3;
+    }
+
+    &:focus {
+        border: 1px solid $color-orange;
+    }
+
+    &.disabled {
+        background: $color-font5;
+        color: $color-font3;
+    }
+}

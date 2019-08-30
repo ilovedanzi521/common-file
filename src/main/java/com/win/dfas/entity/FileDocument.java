@@ -7,18 +7,59 @@ import java.util.Date;
 
 @Document
 public class FileDocument {
-
-    @Id  // 主键
+    /**
+     *  主键
+     */
+    @Id
     private String id;
-    private String name;        // 文件名称
-    private long size;          // 文件大小
-    private Date uploadDate;    // 上传时间
-    private String md5;         // 文件MD5值
-    private byte[] content;     // 文件内容
-    private String contentType; // 文件类型
-    private String suffix;      // 文件后缀名
-    private String description; // 文件描述
-    private String gridfsId;    // 大文件管理GridFS的ID
+    /**
+     *  文件名称
+     */
+    private String name;
+    /**
+     *  文件大小
+     */
+    private long size;
+    /**
+     *  上传时间
+     */
+    private Date uploadDate;
+    /**
+     *  文件MD5值
+     */
+    private String md5;
+    /**
+     *  文件内容
+     */
+    private byte[] content;
+    /**
+     *  文件类型
+     */
+    private String contentType;
+    /**
+     *  文件后缀名
+     */
+    private String suffix;
+    /**
+     *  文件描述
+     */
+    private String description;
+    /**
+     *  大文件管理GridFS的ID
+     */
+    private String gridfsId;
+    /**
+     *  文件目录
+     */
+    private int filepathId;
+
+    public int getFilepathId() {
+        return filepathId;
+    }
+
+    public void setFilepathId(int filepathId) {
+        this.filepathId = filepathId;
+    }
 
     public String getId() {
         return id;

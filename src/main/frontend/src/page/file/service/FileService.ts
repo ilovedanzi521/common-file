@@ -71,4 +71,37 @@ export default class FileService {
             AxiosFun.commonFileServiceName + "/files/" + id
         );
     }
+    /**
+     * 获取id序号
+     */
+    getid() {
+        return AxiosFun.get(
+            AxiosFun.commonFileServiceName + "/files/getNo/fileKey"
+        );
+    }
+    /**
+     *
+     */
+    addFilePath(obj) {
+        return AxiosFun.post(
+            AxiosFun.commonFileServiceName + "/files/addFilePath",
+            obj
+        );
+    }
+
+    deleteFilePath(id) {
+        return AxiosFun.winDelete(
+            AxiosFun.commonFileServiceName + "/files/deleteFilePath/" + id
+        );
+    }
+    listFilePath() {
+        return AxiosFun.get(
+            AxiosFun.commonFileServiceName + "/files/listFilePath"
+        );
+    }
+    judgeFileSize() {
+        return AxiosFun.get(
+            AxiosFun.commonFileServiceName + "/files/judgeFileSize"
+        );
+    }
 }

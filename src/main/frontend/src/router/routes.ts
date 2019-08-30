@@ -1,4 +1,5 @@
 import File from "@/page/file/view/FileExchange.vue";
+import Info from "@/page/file/view/Tabs.vue";
 let routers = [
     {
         path: "/file",

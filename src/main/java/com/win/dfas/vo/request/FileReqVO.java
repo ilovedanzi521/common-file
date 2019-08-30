@@ -24,13 +24,9 @@ import javax.validation.constraints.NotNull;
 public class FileReqVO extends BaseReqVO {
     private String name;
     /**
-     * 文件类型
+     * md5
      */
-    private String contentType;
-    /**
-     * 文件描述
-     */
-    private String description;
+    private String md5;
 
-
+    private int filepathId;
 }

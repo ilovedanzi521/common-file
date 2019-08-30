@@ -2,7 +2,9 @@ package com.win.dfas.service;
 
 import com.github.pagehelper.PageInfo;
 import com.win.dfas.entity.FileDocument;
+import com.win.dfas.entity.FilePathEntity;
 import com.win.dfas.vo.request.FileReqVO;
+import com.win.dfas.vo.response.FilePathRepVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -55,4 +57,45 @@ public interface IFileService {
      * @return
      */
     PageInfo<FileDocument> listFilesByPage(FileReqVO fileReqVO);
+    /**
+     * @Title: addFilePath
+     * @Description 增加目录
+     * @param fileEntity
+     * @return void
+     * @throws
+     * @author wanglei
+     * @Date 2019/8/28/18:54
+     */
+    void addFilePath(FilePathEntity fileEntity);
+    /**
+     * @Title: deleteFilePath
+     * @Description 删除目录
+     * @param id
+     * @return void
+     * @throws
+     * @author wanglei
+     * @Date 2019/8/28/19:00
+     */
+    void deleteFilePath(int id);
+    /**
+     * @Title: listFilePath
+     * @Description 获取文件目录
+     * @param
+     * @return java.util.List<com.win.dfas.entity.FilePathEntity>
+     * @throws
+     * @author wanglei
+     * @Date 2019/8/30/13:42
+     */
+    List<FilePathEntity> listFilePath();
+    /**
+     * @Title: judgeFileSize
+     * @Description 判断文件是否存在
+     * @param
+     * @return boolean
+     * @throws
+     * @author wanglei
+     * @Date 2019/8/30/15:43
+     */
+    boolean judgeFileSize();
+
 }

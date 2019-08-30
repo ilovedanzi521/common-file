@@ -26,11 +26,11 @@ export default class FileReqVO extends BaseReqVO {
      */
     public name: string;
     /**
-     * 文件类型
+     * MD5
      */
-    public contentType: string;
+    public md5: string;
     /**
-     * 文件描述
+     * 文件路径
      */
-    public description: string;
+    public filepathId: number;
 }

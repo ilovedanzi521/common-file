@@ -257,6 +257,7 @@ export default class FileController extends BaseController {
                 id: "",
                 label: "",
                 path: "",
+                size: "0",
                 children: []
             };
             obj.id = id;
@@ -274,6 +275,7 @@ export default class FileController extends BaseController {
                 fatherId: "",
                 level: "",
                 path: "",
+                size: "0",
                 children: []
             };
             obj.id = id;

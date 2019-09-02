@@ -11,7 +11,7 @@
 
     <groupId>com.win.dfas</groupId>
     <artifactId>dfas-common-file</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>dfas-common-file</name>
     <description>文件服务器</description>
 
@@ -50,6 +50,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>javax.servlet</groupId>-->

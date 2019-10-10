@@ -31,7 +31,7 @@
 
                     <div class="form_content">
                         <win_form_item style="margin-left: 0px">
-                            <el-upload class="upload-demo" :action="actionUrl" multiple :limit="3" :on-success="handleSuccess" :show-file-list="false">
+                            <el-upload class="upload-demo" :action="actionUrl" multiple  :on-success="handleSuccess" :show-file-list="false">
                                 <el-button size="small" type="primary">点击上传</el-button>
                             </el-upload>
                         </win_form_item>

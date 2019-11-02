@@ -1,29 +1,30 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from "vue";
-import App from "./App.vue";
 import VueDND from "awe-dnd";
 import ElementUI from "element-ui";
-import "./assets/style/theme.scss";
+import "xe-utils";
+import App from "./App.vue";
 import router from "./router/index";
 import store from "./store/index";
-import "./assets/style/reset.scss";
-import "./assets/style/font.scss";
-import "@win-frond-frameworks/biz-common/dist/static/index.css";
-import filters from "../src/mixin/filters";
-import directives from "../src/mixin/directives";
+import { winBiz } from "./async-chunks";
 
-Vue.use(directives);
-import VxeTable from "vxe-table";
-//注册全局filters
-Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
-Vue.use(VxeTable);
+winBiz("PluginsPage").then(PluginsPage => {
+    Vue.use(PluginsPage);
+});
 
+import "win-biz/assets/style/index.scss";
+import "win-plus/dist/static/index.css";
+import XEUtils from "xe-utils";
+import VXEUtils from "vxe-utils";
+
+Vue.use(VueDND);
 Vue.use(ElementUI);
+Vue.use(VXEUtils, XEUtils);
 
 Vue.config.productionTip = false;
-let d = process.env.NODE_ENV;
-console.log(d);
+let $env = process.env.NODE_ENV;
+Vue.prototype.$env = $env;
 
 //全局锁屏判断
 router.beforeEach((to, from, next) => {
@@ -33,8 +34,6 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
-
-Vue.use(VueDND);
 
 /* eslint-disable no-new */
 // tslint:disable-next-line: no-unused-expression

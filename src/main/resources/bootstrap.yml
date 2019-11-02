@@ -1,24 +1,24 @@
 server:
   port: 10020 #本地开发环境时用，生产部署时，应该设置为0，系统随机创建端口
 spring:
-  redis:
-    database: 0
-    host: 192.168.0.107
-    password: #默认为空
-    port: 6381
-    #      max-idle: 8 #最大空闲连接
-    #      min-idle: 0 #最小空闲连接
-    #      max-active: 8 #连接池最大连接数（使用负值表示没有限制）
-    jedis:
-      pool:
-        max-idle: 8 #最大空闲连接
-        min-idle: 0 #最小空闲连接
-        max-active: 8 #连接池最大连接数（使用负值表示没有限制）
+#  redis:
+#    database: 0
+#    host: 192.168.0.107
+#    password: #默认为空
+#    port: 6381
+#    #      max-idle: 8 #最大空闲连接
+#    #      min-idle: 0 #最小空闲连接
+#    #      max-active: 8 #连接池最大连接数（使用负值表示没有限制）
+#    jedis:
+#      pool:
+#        max-idle: 8 #最大空闲连接
+#        min-idle: 0 #最小空闲连接
+#        max-active: 8 #连接池最大连接数（使用负值表示没有限制）
   profiles:
     active: dev
   data:
     mongodb:
-      uri: mongodb://192.168.203.132:27017/test
+      uri: mongodb://192.168.0.61:27017/test
   servlet:
     multipart:
       max-file-size: 1000MB
